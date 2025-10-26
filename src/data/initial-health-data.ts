@@ -1,0 +1,65 @@
+import type { HealthData } from "@/types/health-data";
+
+export const initialHealthData: HealthData = {
+	currentWeight: 75.4,
+	currentHeight: 175,
+	dailyCalories: {
+		consumed: 1850,
+		target: 2200,
+	},
+	dailyMacros: {
+		protein: 95,
+		carbs: 210,
+		fat: 65,
+	},
+	weeklyCalories: [
+		{ day: "Mon", consumed: 2100, target: 2200 },
+		{ day: "Tue", consumed: 1950, target: 2200 },
+		{ day: "Wed", consumed: 2250, target: 2200 },
+		{ day: "Thu", consumed: 1750, target: 2200 },
+		{ day: "Fri", consumed: 2300, target: 2200 },
+		{ day: "Sat", consumed: 2450, target: 2200 },
+		{ day: "Sun", consumed: 1850, target: 2200 },
+	],
+	healthHistory: [
+		{ date: "May 1", weight: 77.1, calories: 2200 },
+		{ date: "May 5", weight: 76.8, calories: 2150 },
+		{ date: "May 9", weight: 76.5, calories: 2100 },
+		{ date: "May 13", weight: 76.0, calories: 2050 },
+		{ date: "May 17", weight: 75.8, calories: 2000 },
+		{ date: "May 21", weight: 75.5, calories: 1950 },
+		{ date: "May 25", weight: 75.4, calories: 1900 },
+	],
+	healthGoals: {
+		startingWeight: 80,
+		targetWeight: 70,
+		targetDate: "September 30, 2023",
+		weeklyActivityMinutes: 250,
+		activityType: ["Running", "Strength Training", "Yoga"],
+		proteinTarget: 120,
+		waterIntakeTarget: 2.5,
+		dietaryPreferences: [
+			"High protein",
+			"Low processed foods",
+			"Balanced macros",
+		],
+	},
+	healthNotes:
+		"Been feeling more energetic since starting the new workout routine. Sleep quality has improved as well. Need to increase water intake on workout days.",
+	userProfile: {
+		name: "Alex Johnson",
+		email: "alex.johnson@example.com",
+		phone: "+1 (555) 123-4567",
+		dateOfBirth: "May 15, 1988",
+		gender: "Male",
+		location: "Portland, OR",
+		bio: "Software developer and fitness enthusiast. Working on improving my health and wellness in 2023.",
+		avatarUrl: "",
+		memberSince: "January 2023",
+		bloodType: "O+",
+		emergencyContact: "Sarah Johnson: +1 (555) 987-6543",
+		allergies: ["Peanuts", "Shellfish"],
+		medicalConditions: [],
+		medications: [],
+	},
+};
