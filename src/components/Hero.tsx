@@ -1,8 +1,13 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Activity } from "lucide-react";
+import { useAuth } from "@/context/auth-context";
 
 export default function Hero() {
+  const { isAuthenticated } = useAuth();
+
   return (
     <div className="relative w-full overflow-hidden">
       <div className="container relative z-10 mx-auto flex flex-col items-center justify-center px-4 py-24 text-center md:py-32">
@@ -21,7 +26,9 @@ export default function Hero() {
         </p>
         <div className="flex flex-col gap-4 sm:flex-row">
           <Button size="lg" asChild>
-            <Link href="#">Start a consultation</Link>
+            <Link href={isAuthenticated ? "/instructor-chat" : "/login"}>
+              Start a consultation
+            </Link>
           </Button>
           <Button size="lg" variant="outline" asChild>
             <Link href="/about">Learn more</Link>

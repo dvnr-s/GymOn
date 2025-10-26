@@ -1,11 +1,16 @@
 import type { Metadata } from "next";
 import DashboardPage from "@/components/dashboard/dashboard-page";
+import ProtectedRoute from "@/components/auth/protected-route";
 
 export const metadata: Metadata = {
-	title: "Dashboard | HealthTrack",
-	description: "View your health metrics and progress",
+  title: "Dashboard | GymOn",
+  description: "View your health dashboard",
 };
 
 export default function Dashboard() {
-	return <DashboardPage />;
+  return (
+    <ProtectedRoute>
+      <DashboardPage />
+    </ProtectedRoute>
+  );
 }

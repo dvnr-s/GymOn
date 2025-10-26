@@ -3,16 +3,34 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useTransitionRouter } from "next-view-transitions";
-import { Activity } from "lucide-react";
+import {
+  Activity,
+  LogOut,
+  User,
+  BarChart3,
+  Utensils,
+  Video,
+  Plus,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useAuth } from "@/context/auth-context";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const router = useTransitionRouter();
+  const { user, isAuthenticated, logout } = useAuth();
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -63,7 +81,62 @@ export default function Navbar() {
             ))}
           </div>
           <ThemeToggle />
-          <Button size="sm">Get Started</Button>
+          {isAuthenticated ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="flex items-center gap-2"
+                >
+                  <User className="h-4 w-4" />
+                  {user?.name}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => router.push("/profile")}>
+                  <User className="mr-2 h-4 w-4" />
+                  Profile
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => router.push("/dashboard")}>
+                  <BarChart3 className="mr-2 h-4 w-4" />
+                  Dashboard
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => router.push("/data-input")}>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Data Input
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => router.push("/diet-selection")}
+                >
+                  <Utensils className="mr-2 h-4 w-4" />
+                  Diet Plans
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => router.push("/instructor-chat")}
+                >
+                  <Video className="mr-2 h-4 w-4" />
+                  Video Call
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={logout}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Log out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <div className="flex items-center gap-2">
+              <Button size="sm" variant="ghost" asChild>
+                <Link href="/login">Sign In</Link>
+              </Button>
+              <Button size="sm" asChild>
+                <Link href="/register">Get Started</Link>
+              </Button>
+            </div>
+          )}
         </nav>
 
         {/* Mobile Menu Button */}
@@ -132,7 +205,63 @@ export default function Navbar() {
             <ThemeToggle />
             <span className="ml-2 text-sm">Toggle theme</span>
           </div>
-          <Button className="mt-4 w-full sm:w-auto">Get Started</Button>
+          {isAuthenticated ? (
+            <div className="space-y-4">
+              <Button
+                className="w-full"
+                variant="ghost"
+                onClick={() => router.push("/profile")}
+              >
+                <User className="mr-2 h-4 w-4" />
+                Profile
+              </Button>
+              <Button
+                className="w-full"
+                variant="ghost"
+                onClick={() => router.push("/dashboard")}
+              >
+                <BarChart3 className="mr-2 h-4 w-4" />
+                Dashboard
+              </Button>
+              <Button
+                className="w-full"
+                variant="ghost"
+                onClick={() => router.push("/data-input")}
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                Data Input
+              </Button>
+              <Button
+                className="w-full"
+                variant="ghost"
+                onClick={() => router.push("/diet-selection")}
+              >
+                <Utensils className="mr-2 h-4 w-4" />
+                Diet Plans
+              </Button>
+              <Button
+                className="w-full"
+                variant="ghost"
+                onClick={() => router.push("/instructor-chat")}
+              >
+                <Video className="mr-2 h-4 w-4" />
+                Video Call
+              </Button>
+              <Button className="w-full" variant="outline" onClick={logout}>
+                <LogOut className="mr-2 h-4 w-4" />
+                Log out
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <Button className="w-full" variant="ghost" asChild>
+                <Link href="/login">Sign In</Link>
+              </Button>
+              <Button className="w-full" asChild>
+                <Link href="/register">Get Started</Link>
+              </Button>
+            </div>
+          )}
         </nav>
       </div>
     </header>
