@@ -120,10 +120,15 @@ const InstructorChatContent = () => {
       setError("");
 
       const peer = new Peer(id, {
-        host: window.location.hostname,
+        host:
+          window.location.hostname === "localhost"
+            ? "localhost"
+            : "0.peerjs.com",
         port: window.location.hostname === "localhost" ? 9000 : 443,
-        path: "/myapp",
-        secure: window.location.protocol === "https:",
+        path: window.location.hostname === "localhost" ? "/myapp" : "/",
+        secure:
+          window.location.protocol === "https:" ||
+          window.location.hostname !== "localhost",
         debug: 2,
       });
 
