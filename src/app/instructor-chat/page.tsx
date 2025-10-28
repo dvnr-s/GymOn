@@ -26,32 +26,34 @@ const PeerPage = () => {
       return;
     }
 
-    setIsCalling(true);
-    navigator.mediaDevices
-      .getUserMedia({
-        video: isVideoEnabled,
-        audio: isAudioEnabled,
-      })
-      .then((stream) => {
-        localStreamRef.current = stream;
-        const call = peerInstance?.call(idToCall, stream);
-        if (call) {
-          currentCallRef.current = call;
-          call.on("stream", (userVideoStream) => {
-            if (callingVideoRef.current) {
-              callingVideoRef.current.srcObject = userVideoStream;
-            }
-          });
+    if (!localStreamRef.current) {
+      alert("Media stream not available. Please refresh the page.");
+      return;
+    }
 
-          call.on("close", () => {
-            endCall();
-          });
+    setIsCalling(true);
+    const call = peerInstance?.call(idToCall, localStreamRef.current);
+    if (call) {
+      currentCallRef.current = call;
+      call.on("stream", (userVideoStream) => {
+        if (callingVideoRef.current) {
+          callingVideoRef.current.srcObject = userVideoStream;
         }
-      })
-      .catch((err) => {
-        console.error("Error accessing media devices:", err);
-        setIsCalling(false);
       });
+
+      call.on("close", () => {
+        endCall();
+      });
+
+      call.on("error", (err) => {
+        console.error("Call error:", err);
+        alert("Call failed. Please try again.");
+        endCall();
+      });
+    } else {
+      setIsCalling(false);
+      alert("Failed to initiate call. Please try again.");
+    }
   };
 
   const endCall = () => {
@@ -76,65 +78,22 @@ const PeerPage = () => {
   };
 
   const toggleCamera = () => {
-    if (localStreamRef.current) {
-      const videoTrack = localStreamRef.current.getVideoTracks()[0];
-      if (videoTrack) {
-        if (isVideoEnabled) {
-          // Stop the video track - this will turn off the camera LED
-          videoTrack.stop();
-          setIsVideoEnabled(false);
-        } else {
-          // To turn camera back on, we need to get a new stream
-          navigator.mediaDevices
-            .getUserMedia({ video: true, audio: false })
-            .then((newStream) => {
-              const newVideoTrack = newStream.getVideoTracks()[0];
-              // Replace the stopped track with the new one
-              localStreamRef.current?.removeTrack(videoTrack);
-              localStreamRef.current?.addTrack(newVideoTrack);
+    if (!localStreamRef.current) return;
 
-              // Update the video element
-              if (myVideoRef.current) {
-                myVideoRef.current.srcObject = localStreamRef.current;
-              }
-
-              setIsVideoEnabled(true);
-            })
-            .catch((err) => {
-              console.error("Failed to restart camera:", err);
-              alert("Could not access camera. Please check permissions.");
-            });
-        }
-      }
+    const videoTrack = localStreamRef.current.getVideoTracks()[0];
+    if (videoTrack) {
+      videoTrack.enabled = !isVideoEnabled;
+      setIsVideoEnabled(!isVideoEnabled);
     }
   };
 
   const toggleMicrophone = () => {
-    if (localStreamRef.current) {
-      const audioTrack = localStreamRef.current.getAudioTracks()[0];
-      if (audioTrack) {
-        if (isAudioEnabled) {
-          // Stop the audio track - this will turn off the microphone
-          audioTrack.stop();
-          setIsAudioEnabled(false);
-        } else {
-          // To turn microphone back on, we need to get a new stream
-          navigator.mediaDevices
-            .getUserMedia({ video: false, audio: true })
-            .then((newStream) => {
-              const newAudioTrack = newStream.getAudioTracks()[0];
-              // Replace the stopped track with the new one
-              localStreamRef.current?.removeTrack(audioTrack);
-              localStreamRef.current?.addTrack(newAudioTrack);
+    if (!localStreamRef.current) return;
 
-              setIsAudioEnabled(true);
-            })
-            .catch((err) => {
-              console.error("Failed to restart microphone:", err);
-              alert("Could not access microphone. Please check permissions.");
-            });
-        }
-      }
+    const audioTrack = localStreamRef.current.getAudioTracks()[0];
+    if (audioTrack) {
+      audioTrack.enabled = !isAudioEnabled;
+      setIsAudioEnabled(!isAudioEnabled);
     }
   };
 
@@ -152,8 +111,8 @@ const PeerPage = () => {
 
         navigator.mediaDevices
           .getUserMedia({
-            video: isVideoEnabled,
-            audio: isAudioEnabled,
+            video: true,
+            audio: true,
           })
           .then((stream) => {
             localStreamRef.current = stream;
@@ -162,20 +121,33 @@ const PeerPage = () => {
             }
 
             peer.on("call", (call) => {
-              currentCallRef.current = call;
-              call.answer(stream);
-              setIsCalling(true);
+              if (localStreamRef.current) {
+                currentCallRef.current = call;
+                call.answer(localStreamRef.current);
+                setIsCalling(true);
 
-              call.on("stream", (userVideoStream) => {
-                if (callingVideoRef.current) {
-                  callingVideoRef.current.srcObject = userVideoStream;
-                }
-              });
+                call.on("stream", (userVideoStream) => {
+                  if (callingVideoRef.current) {
+                    callingVideoRef.current.srcObject = userVideoStream;
+                  }
+                });
 
-              call.on("close", () => {
-                endCall();
-              });
+                call.on("close", () => {
+                  endCall();
+                });
+
+                call.on("error", (err) => {
+                  console.error("Incoming call error:", err);
+                  endCall();
+                });
+              }
             });
+          })
+          .catch((err) => {
+            console.error("Error accessing media devices:", err);
+            alert(
+              "Could not access camera/microphone. Please check permissions."
+            );
           });
 
         peer.on("disconnected", () => {
