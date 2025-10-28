@@ -79,8 +79,32 @@ const PeerPage = () => {
     if (localStreamRef.current) {
       const videoTrack = localStreamRef.current.getVideoTracks()[0];
       if (videoTrack) {
-        videoTrack.enabled = !videoTrack.enabled;
-        setIsVideoEnabled(videoTrack.enabled);
+        if (isVideoEnabled) {
+          // Stop the video track - this will turn off the camera LED
+          videoTrack.stop();
+          setIsVideoEnabled(false);
+        } else {
+          // To turn camera back on, we need to get a new stream
+          navigator.mediaDevices
+            .getUserMedia({ video: true, audio: false })
+            .then((newStream) => {
+              const newVideoTrack = newStream.getVideoTracks()[0];
+              // Replace the stopped track with the new one
+              localStreamRef.current?.removeTrack(videoTrack);
+              localStreamRef.current?.addTrack(newVideoTrack);
+
+              // Update the video element
+              if (myVideoRef.current) {
+                myVideoRef.current.srcObject = localStreamRef.current;
+              }
+
+              setIsVideoEnabled(true);
+            })
+            .catch((err) => {
+              console.error("Failed to restart camera:", err);
+              alert("Could not access camera. Please check permissions.");
+            });
+        }
       }
     }
   };
@@ -89,8 +113,27 @@ const PeerPage = () => {
     if (localStreamRef.current) {
       const audioTrack = localStreamRef.current.getAudioTracks()[0];
       if (audioTrack) {
-        audioTrack.enabled = !audioTrack.enabled;
-        setIsAudioEnabled(audioTrack.enabled);
+        if (isAudioEnabled) {
+          // Stop the audio track - this will turn off the microphone
+          audioTrack.stop();
+          setIsAudioEnabled(false);
+        } else {
+          // To turn microphone back on, we need to get a new stream
+          navigator.mediaDevices
+            .getUserMedia({ video: false, audio: true })
+            .then((newStream) => {
+              const newAudioTrack = newStream.getAudioTracks()[0];
+              // Replace the stopped track with the new one
+              localStreamRef.current?.removeTrack(audioTrack);
+              localStreamRef.current?.addTrack(newAudioTrack);
+
+              setIsAudioEnabled(true);
+            })
+            .catch((err) => {
+              console.error("Failed to restart microphone:", err);
+              alert("Could not access microphone. Please check permissions.");
+            });
+        }
       }
     }
   };
