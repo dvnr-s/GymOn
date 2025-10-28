@@ -101,10 +101,16 @@ const PeerPage = () => {
     if (id) {
       let peer: Peer;
       if (typeof window !== "undefined") {
-        peer = new Peer(id, {
+        // Use PeerJS cloud service for production, localhost for development
+        const isDevelopment = process.env.NODE_ENV === 'development';
+        
+        peer = new Peer(id, isDevelopment ? {
           host: "localhost",
           port: 9000,
           path: "/myapp",
+        } : {
+          // Use PeerJS cloud service for production
+          // You can also use your own PeerJS server if you have one deployed
         });
 
         setPeerInstance(peer);
