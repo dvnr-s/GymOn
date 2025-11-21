@@ -41,6 +41,7 @@ export default function DataInputPage() {
 				currentWeight: data.weight,
 				currentHeight: data.height,
 				healthHistory: [
+					...healthData.healthHistory,
 					{
 						date: new Date().toLocaleDateString("en-US", {
 							month: "short",
@@ -49,7 +50,6 @@ export default function DataInputPage() {
 						weight: data.weight,
 						calories: healthData.dailyCalories.consumed,
 					},
-					...healthData.healthHistory,
 				],
 			});
 
