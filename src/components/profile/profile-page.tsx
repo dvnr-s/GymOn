@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { Clock, Edit, Mail, MapPin, Phone, Target, User } from "lucide-react";
@@ -25,6 +25,7 @@ import { ProfileEditForm } from "@/components/profile/profile-edit-form";
 export default function ProfilePage() {
   const { healthData } = useContext(HealthDataContext);
   const { userProfile, healthGoals } = healthData;
+  const [activeTab, setActiveTab] = useState("info");
 
   return (
     <PageWrapper>
@@ -78,7 +79,7 @@ export default function ProfilePage() {
                   </div>
                 </CardContent>
                 <CardFooter>
-                  <Button className="w-full" variant="outline">
+                  <Button className="w-full" variant="outline" onClick={() => setActiveTab("edit")}>
                     <Edit className="w-4 h-4 mr-2" /> Edit Profile
                   </Button>
                 </CardFooter>
@@ -145,7 +146,7 @@ export default function ProfilePage() {
           </div>
 
           <div className="md:col-span-2">
-            <Tabs defaultValue="info">
+            <Tabs value={activeTab} onValueChange={setActiveTab}>
               <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="info">
                   <User className="w-4 h-4 mr-2" />
