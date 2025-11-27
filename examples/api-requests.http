@@ -1,0 +1,536 @@
+### GymOn API Examples
+### Use with REST Client extension for VS Code or similar tools
+### https://marketplace.visualstudio.com/items?itemName=humao.rest-client
+###
+### HOW TO GET YOUR TOKEN:
+### 1. First, run the "Register a new user" or "Login" request below
+### 2. Copy the "token" value from the response
+### 3. Replace YOUR_JWT_TOKEN_HERE with your actual token
+### 4. Now you can use protected endpoints that require authentication
+
+@baseUrl = http://localhost:3000/api
+@token = YOUR_JWT_TOKEN_HERE
+
+# ============================================
+# AUTHENTICATION
+# ============================================
+
+### Register a new user
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "email": "test@example.com",
+  "password": "password123",
+  "role": "user",
+  "profile": {
+    "name": "Test User",
+    "phone": "+1234567890",
+    "location": "New York"
+  }
+}
+
+### Register an instructor
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "username": "instructor_jane",
+  "email": "jane@example.com",
+  "password": "password123",
+  "role": "instructor",
+  "profile": {
+    "name": "Jane Smith",
+    "bio": "Certified fitness instructor with 10 years of experience"
+  }
+}
+
+### Login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "password123"
+}
+
+### Get current user
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{token}}
+
+### Logout
+POST {{baseUrl}}/auth/logout
+Authorization: Bearer {{token}}
+
+# ============================================
+# USERS
+# ============================================
+
+### Get user profile by ID
+# Replace USER_ID with actual user ID
+GET {{baseUrl}}/users/USER_ID
+Authorization: Bearer {{token}}
+
+### Update user profile
+PUT {{baseUrl}}/users/USER_ID
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "profile": {
+    "name": "Updated Name",
+    "bio": "Updated bio text",
+    "location": "San Francisco",
+    "allergies": ["Peanuts", "Shellfish"]
+  }
+}
+
+### Delete user account
+DELETE {{baseUrl}}/users/USER_ID
+Authorization: Bearer {{token}}
+
+# ============================================
+# HEALTH DATA
+# ============================================
+
+### Add new health data
+POST {{baseUrl}}/health-data
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "weight": 75.5,
+  "height": 175,
+  "bodyFat": 18.5,
+  "muscleMass": 35.2,
+  "dailyCalories": {
+    "consumed": 2000,
+    "target": 2200
+  },
+  "dailyMacros": {
+    "protein": 120,
+    "carbs": 200,
+    "fat": 70
+  },
+  "notes": "Feeling great after morning workout"
+}
+
+### Get all health data (with pagination)
+GET {{baseUrl}}/health-data?page=1&limit=30
+Authorization: Bearer {{token}}
+
+### Get health data with date filter
+GET {{baseUrl}}/health-data?startDate=2024-01-01&endDate=2024-01-31
+Authorization: Bearer {{token}}
+
+### Get user's health history
+GET {{baseUrl}}/health-data/USER_ID
+Authorization: Bearer {{token}}
+
+### Get latest health data for user
+GET {{baseUrl}}/health-data/USER_ID/latest
+Authorization: Bearer {{token}}
+
+### Update health entry
+PUT {{baseUrl}}/health-data/entry/HEALTH_DATA_ID
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "weight": 74.8,
+  "notes": "Weight updated after morning weigh-in"
+}
+
+### Delete health entry
+DELETE {{baseUrl}}/health-data/entry/HEALTH_DATA_ID
+Authorization: Bearer {{token}}
+
+# ============================================
+# DIET PLANS
+# ============================================
+
+### Create a Mediterranean diet plan
+POST {{baseUrl}}/diet-plans
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "planType": "mediterranean",
+  "name": "My Mediterranean Journey",
+  "description": "A heart-healthy diet focusing on whole foods",
+  "dailyCalories": 2000,
+  "macroRatio": {
+    "protein": 25,
+    "carbs": 45,
+    "fat": 30
+  },
+  "meals": [
+    {
+      "name": "Breakfast",
+      "time": "8:00 AM",
+      "calories": 400,
+      "items": ["Greek yogurt with honey", "Fresh berries", "Whole grain toast with olive oil"],
+      "completed": false
+    },
+    {
+      "name": "Lunch",
+      "time": "12:30 PM",
+      "calories": 600,
+      "items": ["Greek salad with feta", "Grilled chicken", "Hummus with pita"],
+      "completed": false
+    },
+    {
+      "name": "Dinner",
+      "time": "7:00 PM",
+      "calories": 700,
+      "items": ["Grilled salmon", "Roasted vegetables", "Brown rice"],
+      "completed": false
+    },
+    {
+      "name": "Snack",
+      "time": "3:30 PM",
+      "calories": 300,
+      "items": ["Mixed nuts", "Fresh fruit", "Olives"],
+      "completed": false
+    }
+  ],
+  "tags": ["heart-healthy", "balanced", "anti-inflammatory"],
+  "benefits": ["Reduces heart disease risk", "Improves brain function"],
+  "tips": ["Use olive oil for cooking", "Eat fish at least twice a week"]
+}
+
+### Create a Keto diet plan
+POST {{baseUrl}}/diet-plans
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "planType": "keto",
+  "name": "Keto Fat Burn",
+  "dailyCalories": 1800,
+  "macroRatio": {
+    "protein": 20,
+    "carbs": 5,
+    "fat": 75
+  },
+  "meals": [
+    {
+      "name": "Breakfast",
+      "time": "9:00 AM",
+      "calories": 500,
+      "items": ["Bacon and eggs", "Avocado", "Bulletproof coffee"]
+    }
+  ],
+  "tags": ["low-carb", "high-fat", "weight-loss"]
+}
+
+### Get all diet plans
+GET {{baseUrl}}/diet-plans
+Authorization: Bearer {{token}}
+
+### Get active diet plans only
+GET {{baseUrl}}/diet-plans?isActive=true
+Authorization: Bearer {{token}}
+
+### Get diet plans by type
+GET {{baseUrl}}/diet-plans?planType=mediterranean
+Authorization: Bearer {{token}}
+
+### Get specific diet plan
+GET {{baseUrl}}/diet-plans/DIET_PLAN_ID
+Authorization: Bearer {{token}}
+
+### Update diet plan
+PUT {{baseUrl}}/diet-plans/DIET_PLAN_ID
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "dailyCalories": 2100,
+  "isActive": true
+}
+
+### Track meal completion
+PATCH {{baseUrl}}/diet-plans/DIET_PLAN_ID/track-meal
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "mealIndex": 0,
+  "completed": true
+}
+
+### Get user's diet plans
+GET {{baseUrl}}/diet-plans/user/USER_ID
+Authorization: Bearer {{token}}
+
+### Delete diet plan
+DELETE {{baseUrl}}/diet-plans/DIET_PLAN_ID
+Authorization: Bearer {{token}}
+
+# ============================================
+# WORKOUT PLANS
+# ============================================
+
+### Create an upper body workout
+POST {{baseUrl}}/workouts
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "planName": "Upper Body Power",
+  "description": "Build strength in chest, back, shoulders and arms",
+  "exercises": [
+    {
+      "name": "Bench Press",
+      "sets": 4,
+      "reps": 10,
+      "weight": 60,
+      "notes": "Control the descent"
+    },
+    {
+      "name": "Bent Over Rows",
+      "sets": 4,
+      "reps": 10,
+      "weight": 50
+    },
+    {
+      "name": "Overhead Press",
+      "sets": 3,
+      "reps": 12,
+      "weight": 30
+    },
+    {
+      "name": "Pull-ups",
+      "sets": 3,
+      "reps": 8,
+      "notes": "Use assist band if needed"
+    },
+    {
+      "name": "Dumbbell Curls",
+      "sets": 3,
+      "reps": 12,
+      "weight": 12
+    }
+  ],
+  "targetMuscleGroups": ["chest", "back", "shoulders", "biceps", "triceps"],
+  "difficulty": "intermediate",
+  "estimatedDuration": 60,
+  "scheduledDays": ["Monday", "Thursday"]
+}
+
+### Create a leg day workout
+POST {{baseUrl}}/workouts
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "planName": "Leg Day",
+  "exercises": [
+    {
+      "name": "Squats",
+      "sets": 4,
+      "reps": 8,
+      "weight": 80
+    },
+    {
+      "name": "Romanian Deadlifts",
+      "sets": 3,
+      "reps": 10,
+      "weight": 60
+    },
+    {
+      "name": "Leg Press",
+      "sets": 3,
+      "reps": 12,
+      "weight": 120
+    },
+    {
+      "name": "Calf Raises",
+      "sets": 4,
+      "reps": 15,
+      "weight": 40
+    }
+  ],
+  "targetMuscleGroups": ["quadriceps", "hamstrings", "glutes", "calves"],
+  "difficulty": "intermediate",
+  "estimatedDuration": 50,
+  "scheduledDays": ["Tuesday", "Friday"]
+}
+
+### Get all workout plans
+GET {{baseUrl}}/workouts
+Authorization: Bearer {{token}}
+
+### Get active workouts only
+GET {{baseUrl}}/workouts?isActive=true
+Authorization: Bearer {{token}}
+
+### Get workouts by difficulty
+GET {{baseUrl}}/workouts?difficulty=intermediate
+Authorization: Bearer {{token}}
+
+### Get specific workout
+GET {{baseUrl}}/workouts/WORKOUT_ID
+Authorization: Bearer {{token}}
+
+### Update workout plan
+PUT {{baseUrl}}/workouts/WORKOUT_ID
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "exercises": [
+    {
+      "name": "Bench Press",
+      "sets": 5,
+      "reps": 8,
+      "weight": 65
+    }
+  ]
+}
+
+### Mark workout as completed
+PATCH {{baseUrl}}/workouts/WORKOUT_ID/complete
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "duration": 55,
+  "notes": "Increased bench press weight by 5kg, felt strong today!"
+}
+
+### Get user's workouts
+GET {{baseUrl}}/workouts/user/USER_ID
+Authorization: Bearer {{token}}
+
+### Delete workout
+DELETE {{baseUrl}}/workouts/WORKOUT_ID
+Authorization: Bearer {{token}}
+
+# ============================================
+# CHAT MESSAGES
+# ============================================
+
+### Send a message
+POST {{baseUrl}}/chat/messages
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "receiverId": "RECEIVER_USER_ID",
+  "message": "Hello! I wanted to ask about adjusting my workout plan."
+}
+
+### Get chat history with a user
+GET {{baseUrl}}/chat/messages?with=OTHER_USER_ID&page=1&limit=50
+Authorization: Bearer {{token}}
+
+### Mark message as read
+PATCH {{baseUrl}}/chat/messages/MESSAGE_ID/read
+Authorization: Bearer {{token}}
+
+### Get all conversations
+GET {{baseUrl}}/chat/conversations/YOUR_USER_ID
+Authorization: Bearer {{token}}
+
+# ============================================
+# SAMPLE WORKFLOW: Complete User Journey
+# ============================================
+
+### 1. Register
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "username": "fitnessfan",
+  "email": "fitness@example.com",
+  "password": "mypassword123",
+  "profile": {
+    "name": "Fitness Fan",
+    "location": "Los Angeles"
+  }
+}
+
+### 2. Add initial health data
+POST {{baseUrl}}/health-data
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "weight": 80,
+  "height": 180,
+  "notes": "Starting my fitness journey!"
+}
+
+### 3. Create a diet plan
+POST {{baseUrl}}/diet-plans
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "planType": "mediterranean",
+  "name": "My Healthy Start",
+  "dailyCalories": 2000,
+  "macroRatio": {
+    "protein": 30,
+    "carbs": 40,
+    "fat": 30
+  },
+  "meals": [
+    {
+      "name": "Breakfast",
+      "time": "8:00 AM",
+      "calories": 400,
+      "items": ["Oatmeal", "Banana", "Almonds"]
+    }
+  ]
+}
+
+### 4. Create a workout plan
+POST {{baseUrl}}/workouts
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "planName": "Beginner Full Body",
+  "exercises": [
+    {"name": "Push-ups", "sets": 3, "reps": 10},
+    {"name": "Squats", "sets": 3, "reps": 15},
+    {"name": "Plank", "sets": 3, "reps": 1, "duration": 30}
+  ],
+  "difficulty": "beginner",
+  "scheduledDays": ["Monday", "Wednesday", "Friday"]
+}
+
+### 5. Track meal completion
+PATCH {{baseUrl}}/diet-plans/DIET_PLAN_ID/track-meal
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "mealIndex": 0,
+  "completed": true
+}
+
+### 6. Complete workout
+PATCH {{baseUrl}}/workouts/WORKOUT_ID/complete
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "duration": 30,
+  "notes": "First workout done! Feeling motivated!"
+}
+
+### 7. Update health data (next week)
+POST {{baseUrl}}/health-data
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "weight": 79.5,
+  "height": 180,
+  "notes": "Lost 0.5kg in the first week!"
+}
