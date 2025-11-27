@@ -46,6 +46,7 @@ const healthDataSchema = new Schema<IHealthData>(
     bmi: {
       type: Number,
       min: [1, 'BMI must be positive'],
+      max: [100, 'BMI cannot exceed 100'],
     },
     bodyFat: {
       type: Number,

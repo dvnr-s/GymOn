@@ -51,6 +51,7 @@ const exerciseSchema = new Schema<IExercise>(
       type: Number,
       required: [true, 'Number of reps is required'],
       min: [1, 'Reps must be at least 1'],
+      max: [1000, 'Reps cannot exceed 1000'],
     },
     weight: {
       type: Number,

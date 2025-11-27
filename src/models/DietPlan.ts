@@ -47,6 +47,7 @@ const mealSchema = new Schema<IMeal>(
       type: Number,
       required: [true, 'Calories are required'],
       min: [0, 'Calories must be positive'],
+      max: [5000, 'Calories per meal cannot exceed 5000'],
     },
     items: [{ type: String }],
     completed: {

@@ -1,6 +1,12 @@
 ### GymOn API Examples
 ### Use with REST Client extension for VS Code or similar tools
 ### https://marketplace.visualstudio.com/items?itemName=humao.rest-client
+###
+### HOW TO GET YOUR TOKEN:
+### 1. First, run the "Register a new user" or "Login" request below
+### 2. Copy the "token" value from the response
+### 3. Replace YOUR_JWT_TOKEN_HERE with your actual token
+### 4. Now you can use protected endpoints that require authentication
 
 @baseUrl = http://localhost:3000/api
 @token = YOUR_JWT_TOKEN_HERE
